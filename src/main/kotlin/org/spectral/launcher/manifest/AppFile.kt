@@ -21,30 +21,33 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.Adler32
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
 /**
  * Represents an application Jar file which is the application or one of it's
  * library dependency files.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 class AppFile() {
 
     /**
      * The name of the file
      */
-    @XmlAttribute
+    @field:XmlAttribute
     lateinit var file: String
 
     /**
      * The checksum hash of the file.
      */
-    @XmlAttribute
+    @field:XmlAttribute
     var checksum: Long = -1L
 
     /**
      * The size in bytes of the file.
      */
-    @XmlAttribute
+    @field:XmlAttribute
     var size: Long = -1L
 
     /**
