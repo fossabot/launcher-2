@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * version of the client as well as any libraries.
  */
 @XmlRootElement(name = "Application")
-class AppManifest private constructor() {
+class AppManifest internal constructor() {
 
     /**
      * The timestamp this manifest was created at.
