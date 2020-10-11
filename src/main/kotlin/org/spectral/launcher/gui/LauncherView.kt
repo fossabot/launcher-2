@@ -18,7 +18,9 @@
 package org.spectral.launcher.gui
 
 import javafx.animation.Interpolator
+import javafx.application.Platform
 import javafx.geometry.Pos
+import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
@@ -34,6 +36,7 @@ import kotlin.time.milliseconds
 class LauncherView : View("Spectral") {
 
     private var progressBar: ProgressBar by singleAssign()
+    private var status: Label by singleAssign()
 
     /*
      * Animated Logo
@@ -41,10 +44,34 @@ class LauncherView : View("Spectral") {
     private val animationLogoPath = LauncherView::class.java.getResource("/graphics/logo-animated.gif").toExternalForm()
     private val animatedLogo = AnimatedImage(animationLogoPath, 5000.0)
 
+    /**
+     * Updates the status label.
+     *
+     * @param status String
+     */
+    fun updateStatus(status: String) {
+        Platform.runLater { this.status.text = status }
+    }
+
+    /**
+     * Updates the progress bar with a easing animation.
+     *
+     * @param progress Double
+     */
+    fun updateProgress(progress: Double) {
+        Platform.runLater {
+            timeline {
+                keyframe(480.millis) {
+                    keyvalue(this@LauncherView.progressBar.progressProperty(), progress, Interpolator.EASE_IN)
+                }
+            }.play()
+        }
+    }
+
     override val root = vbox {
-        setPrefSize(450.0, 400.0)
+        setPrefSize(400.0, 400.0)
         alignment = Pos.CENTER
-        paddingTop = -32.0
+        paddingTop = -48.0
 
         /*
          * Spectral animated logo.
@@ -75,19 +102,20 @@ class LauncherView : View("Spectral") {
          * The status text
          */
         label("Initializing Launcher...") {
+            status = this
             font = Font(12.0)
-            paddingTop = 14.0
+            paddingTop = 32.0
         }
     }
 
     init {
         timeline {
             keyframe(480.millis) {
-                keyvalue(progressBar.prefWidthProperty(), 350.0, interpolator = Interpolator.EASE_IN)
+                keyvalue(progressBar.prefWidthProperty(), 300.0, interpolator = Interpolator.EASE_IN)
             }
         }.then(timeline {
             keyframe(880.millis) {
-                keyvalue(progressBar.progressProperty(), 0.1, interpolator = Interpolator.EASE_IN)
+                keyvalue(progressBar.progressProperty(), 0.05, interpolator = Interpolator.EASE_IN)
             }
         })
     }

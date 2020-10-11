@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version Project.kotlinVersion
     openjfx
     shadowjar
+    `maven-publish`
     application
 }
 
@@ -40,4 +41,19 @@ javafx {
 
 application {
     mainClassName = "org.spectral.launcher.gui.LauncherApp"
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+
+    publications {
+        create<MavenPublication>("launcher") {
+            groupId = "org.spectral.launcher"
+            artifactId = "launcher"
+            version = project.version.toString()
+            from(components["java"])
+        }
+    }
 }

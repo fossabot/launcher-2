@@ -23,52 +23,51 @@ import java.io.File
 import java.net.URI
 import java.nio.file.Path
 import javax.xml.bind.JAXB
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import javax.xml.bind.annotation.*
 
 /**
  * Represents the manifest.xml manifest file which represents a current
  * version of the client as well as any libraries.
  */
 @XmlRootElement(name = "Application")
-class AppManifest private constructor() {
+@XmlAccessorType(XmlAccessType.FIELD)
+class AppManifest internal constructor() {
 
     /**
      * The timestamp this manifest was created at.
      */
-    @XmlAttribute
+    @field:XmlAttribute
     var ts: Long = -1L
 
     /**
      * The URI where latest artifacts can be downloaded at.
      */
-    @XmlAttribute
+    @field:XmlAttribute
     lateinit var uri: URI
 
     /**
      * The main class which extends the SpectralLauncher abstract class.
      */
-    @XmlAttribute(name = "main")
-    lateinit var mainClass: String
+    @field:XmlAttribute(name = "main")
+    lateinit var launcherClass: String
 
     /**
      * The application files this manifest in for.
      */
-    @XmlElement
+    @field:XmlElement
     val files = mutableListOf<AppFile>()
 
     /**
      * The version of this manifest or application.
      */
-    @XmlElement
+    @field:XmlElement
     lateinit var version: String
 
     /**
      * The path where the application files are stored at on the local
      * system running this launcher process.
      */
-    @XmlElement
+    @field:XmlElement
     lateinit var cacheDir: String
 
     /**
@@ -84,6 +83,15 @@ class AppManifest private constructor() {
      */
     fun getPath(cacheDir: Path): Path {
         return cacheDir.resolve(this.filename)
+    }
+
+    /**
+     * Gets the URI of the remote manifest file.
+     *
+     * @return URI
+     */
+    fun resolveRemoteURI(): URI {
+        return URI.create(uri.toString() + "manifest.xml")
     }
 
     /**

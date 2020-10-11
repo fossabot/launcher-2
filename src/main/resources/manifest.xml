@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Application ts="1602450752770" uri="https://archive.spectralpowered.org/latest/" main="org.spectral.client.launcher.ClientLauncher">
+    <files file="annotations-13.0.jar" checksum="4201984052" size="17536"/>
+    <files file="client-1.0.0.jar" checksum="174307118" size="13291"/>
+    <files file="clikt-jvm-2.8.0.jar" checksum="1951910364" size="487770"/>
+    <files file="dagger-2.29.1.jar" checksum="1308923965" size="34413"/>
+    <files file="FastInfoset-1.2.15.jar" checksum="3637245447" size="311876"/>
+    <files file="istack-commons-runtime-3.0.7.jar" checksum="3732424448" size="25523"/>
+    <files file="javafx-base-11-win.jar" checksum="1678071434" size="750040"/>
+    <files file="javafx-base-11.jar" checksum="378488260" size="302"/>
+    <files file="javafx-controls-11-win.jar" checksum="3384773687" size="2511103"/>
+    <files file="javafx-controls-11.jar" checksum="3456583952" size="306"/>
+    <files file="javafx-fxml-11-win.jar" checksum="2803481481" size="127394"/>
+    <files file="javafx-graphics-11-win.jar" checksum="2311401831" size="6016908"/>
+    <files file="javafx-graphics-11.jar" checksum="1505117938" size="306"/>
+    <files file="javafx-swing-11-win.jar" checksum="1560163824" size="119848"/>
+    <files file="javax.activation-api-1.2.0.jar" checksum="2667705638" size="56674"/>
+    <files file="javax.annotation-3.1.1.jar" checksum="4104050809" size="22294"/>
+    <files file="javax.inject-1.jar" checksum="180262715" size="2497"/>
+    <files file="javax.json-1.1.2.jar" checksum="1161332358" size="101089"/>
+    <files file="javax.json-api-1.1.2.jar" checksum="4026910835" size="31140"/>
+    <files file="jaxb-api-2.3.1.jar" checksum="1861043666" size="128076"/>
+    <files file="jaxb-runtime-2.3.1.jar" checksum="2836907752" size="1093432"/>
+    <files file="kotlin-reflect-1.4.10.jar" checksum="2889760424" size="2893802"/>
+    <files file="kotlin-stdlib-1.4.10.jar" checksum="3356474671" size="1487085"/>
+    <files file="kotlin-stdlib-common-1.4.10.jar" checksum="1838853417" size="191211"/>
+    <files file="kotlin-stdlib-jdk7-1.3.61.jar" checksum="264038364" size="3129"/>
+    <files file="kotlin-stdlib-jdk8-1.3.61.jar" checksum="1745923329" size="15477"/>
+    <files file="stax-ex-1.8.jar" checksum="859773713" size="36073"/>
+    <files file="tinylog-api-2.1.2.jar" checksum="617540712" size="51221"/>
+    <files file="tinylog-api-kotlin-2.1.2.jar" checksum="750033394" size="11432"/>
+    <files file="tinylog-impl-2.1.2.jar" checksum="386389329" size="91219"/>
+    <files file="tornadofx-1.7.20.jar" checksum="3075097706" size="3794196"/>
+    <files file="txw2-2.3.1.jar" checksum="3897161040" size="70288"/>
+    <version>1.0.0</version>
+    <cacheDir>bin/</cacheDir>
+    <filename>manifest.xml</filename>
+</Application>
