@@ -50,7 +50,7 @@ class AppManifest private constructor() {
      * The main class which extends the SpectralLauncher abstract class.
      */
     @XmlAttribute(name = "main")
-    lateinit var mainClass: String
+    lateinit var launcherClass: String
 
     /**
      * The application files this manifest in for.
@@ -84,6 +84,15 @@ class AppManifest private constructor() {
      */
     fun getPath(cacheDir: Path): Path {
         return cacheDir.resolve(this.filename)
+    }
+
+    /**
+     * Gets the URI of the remote manifest file.
+     *
+     * @return URI
+     */
+    fun resolveRemoteURI(): URI {
+        return URI.create(uri.toString() + "manifest.xml")
     }
 
     /**
