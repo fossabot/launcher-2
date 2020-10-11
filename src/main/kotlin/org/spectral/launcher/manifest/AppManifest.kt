@@ -72,6 +72,21 @@ class AppManifest private constructor() {
     lateinit var cacheDir: String
 
     /**
+     * The name of this manifest file.
+     */
+    val filename: String = "manifest.xml"
+
+    /**
+     * Gets the path of the manifest file given a resolved cache directory.
+     *
+     * @param cacheDir Path
+     * @return Path
+     */
+    fun getPath(cacheDir: Path): Path {
+        return cacheDir.resolve(this.filename)
+    }
+
+    /**
      * Gets the cache directory respective to the current running
      * platform operating system.
      *

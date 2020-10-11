@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version Project.kotlinVersion
     openjfx
+    application
 }
 
 tasks.withType<Wrapper> {
@@ -33,5 +34,14 @@ tasks.withType<KotlinCompile> {
 
 javafx {
     version = "11"
-    modules = listOf("javafx.base", "javafx.graphics", "javafx.controls")
+    modules = listOf("javafx.base", "javafx.graphics", "javafx.controls", "javafx.swing")
+}
+
+application {
+    mainClassName = "org.spectral.launcher.gui.LauncherApp"
+}
+
+tasks.withType<JavaExec> {
+    main = application.mainClassName
+    workingDir = rootProject.projectDir
 }
