@@ -17,9 +17,34 @@
 
 package org.spectral.launcher.manifest
 
+import java.net.URI
+import javax.xml.bind.annotation.XmlAttribute
+import javax.xml.bind.annotation.XmlRootElement
+
 /**
- * Represents the spectral.xml manifest file which represents a current
+ * Represents the manifest.xml manifest file which represents a current
  * version of the client as well as any libraries.
  */
-class SpectralManifest {
+@XmlRootElement(name = "Application")
+class AppManifest {
+
+    /**
+     * The timestamp this manifest was created at.
+     */
+    @XmlAttribute
+    var ts: Long = -1L
+
+    /**
+     * The URI where latest artifacts can be downloaded at.
+     */
+    @XmlAttribute
+    lateinit var uri: URI
+
+    /**
+     * The main class which extends the SpectralLauncher abstract class.
+     */
+    @XmlAttribute(name = "main")
+    lateinit var mainClass: String
+
+
 }
