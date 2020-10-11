@@ -28,11 +28,13 @@ object Project {
 }
 
 object Plugin {
-    internal object Version {
+    object Version {
         const val openjfx = "0.0.9"
+        const val shadowjar = "6.1.0"
     }
 
     const val openjfx = "org.openjfx.javafxplugin"
+    const val shadowjar = "com.github.johnrengelman.shadow"
 }
 
 object Library {
@@ -51,4 +53,8 @@ object Library {
 
 val PluginDependenciesSpec.openjfx: PluginDependencySpec get() {
     return id(Plugin.openjfx) version(Plugin.Version.openjfx)
+}
+
+val PluginDependenciesSpec.shadowjar: PluginDependencySpec get() {
+    return id(Plugin.shadowjar) version(Plugin.Version.shadowjar)
 }

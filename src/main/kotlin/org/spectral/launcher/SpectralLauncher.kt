@@ -23,4 +23,12 @@ package org.spectral.launcher
  */
 abstract class SpectralLauncher {
 
+    /**
+     * Starts the spectral launcher.
+     */
+    fun start() {
+
+    }
+
+    abstract fun init()
 }
