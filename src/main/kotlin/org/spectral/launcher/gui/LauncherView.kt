@@ -35,20 +35,21 @@ class LauncherView : View("Spectral") {
     /*
      * Animated Logo
      */
-    private val animationLogoPath = LauncherView::class.java.getResource("/graphics/logo-animation.gif").toExternalForm()
+    private val animationLogoPath = LauncherView::class.java.getResource("/graphics/logo-animated.gif").toExternalForm()
     private val animatedLogo = AnimatedImage(animationLogoPath, 5000.0)
 
     override val root = vbox {
         setPrefSize(450.0, 400.0)
         alignment = Pos.CENTER
+        paddingTop = -32.0
 
         /*
          * Spectral animated logo.
          */
         animatedLogo.cycleCount = 1
         animatedLogo.play()
-        animatedLogo.imageView.fitWidth = 128.0
-        animatedLogo.imageView.fitHeight = 128.0
+        animatedLogo.imageView.fitWidth = 196.0
+        animatedLogo.imageView.fitHeight = 196.0
         add(animatedLogo.imageView)
 
         /*
@@ -56,7 +57,6 @@ class LauncherView : View("Spectral") {
          */
         label("S P E C T R A L") {
             font = Font(32.0)
-            paddingTop = 32.0
         }
 
         /*
@@ -72,7 +72,7 @@ class LauncherView : View("Spectral") {
          */
         label("Initializing Launcher...") {
             font = Font(16.0)
-            paddingTop = 16.0
+            paddingTop = 14.0
         }
     }
 }
