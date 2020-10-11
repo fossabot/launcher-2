@@ -17,11 +17,14 @@
 
 package org.spectral.launcher.gui
 
+import javafx.animation.Interpolator
 import javafx.geometry.Pos
+import javafx.scene.control.ProgressBar
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import org.spectral.launcher.gui.animation.AnimatedImage
 import tornadofx.*
+import kotlin.time.milliseconds
 
 /**
  * The launcher JavaFX view
@@ -30,7 +33,7 @@ import tornadofx.*
  */
 class LauncherView : View("Spectral") {
 
-    private var logoPane: Pane by singleAssign()
+    private var progressBar: ProgressBar by singleAssign()
 
     /*
      * Animated Logo
@@ -62,8 +65,9 @@ class LauncherView : View("Spectral") {
         /*
          * Loading progress bar
          */
-        progressbar(0.1) {
-            prefWidth = 350.0
+        progressbar(0.0) {
+            progressBar = this
+            prefWidth = 0.0
             paddingTop = 32.0
         }
 
@@ -71,8 +75,20 @@ class LauncherView : View("Spectral") {
          * The status text
          */
         label("Initializing Launcher...") {
-            font = Font(16.0)
+            font = Font(12.0)
             paddingTop = 14.0
         }
+    }
+
+    init {
+        timeline {
+            keyframe(480.millis) {
+                keyvalue(progressBar.prefWidthProperty(), 350.0, interpolator = Interpolator.EASE_IN)
+            }
+        }.then(timeline {
+            keyframe(880.millis) {
+                keyvalue(progressBar.progressProperty(), 0.1, interpolator = Interpolator.EASE_IN)
+            }
+        })
     }
 }
