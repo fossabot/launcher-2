@@ -18,6 +18,7 @@
 package org.spectral.launcher.gui
 
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
@@ -27,18 +28,17 @@ import org.spectral.launcher.SpectralLauncher
 import org.spectral.launcher.manifest.AppManifest
 import org.tinylog.kotlin.Logger
 import tornadofx.*
+import java.util.concurrent.CountDownLatch
 
 /**
  * The launcher JavaFX application.
  */
 class LauncherApp : Application() {
 
-    private val view = find<LauncherView>()
+    private val view = LauncherView()
 
     private lateinit var primaryStage: Stage
     private lateinit var stage: Stage
-
-    private lateinit var spectralLauncher: SpectralLauncher
 
     init {
         launcher = object : Launcher {
@@ -66,13 +66,9 @@ class LauncherApp : Application() {
     override fun start(stage: Stage) {
         FX.registerApplication(this, stage)
 
-        /*
-         * Build the spectral launcher.
-         */
-        spectralLauncher = SpectralLauncher(launcher)
-
         this.primaryStage = stage
         this.stage = Stage(StageStyle.UNDECORATED)
+        this.stage.icons.add(Image("/graphics/logo-app-icon.png"))
 
         val scene = Scene(view.root)
 
@@ -85,14 +81,36 @@ class LauncherApp : Application() {
 
         this.stage.show()
 
-       Thread {
-           Thread.currentThread().name = "spectral-launcher"
+        Thread {
+            Thread.sleep(1000)
 
-           /*
-            * Load the launcher instance from the manifest.
-            */
-           spectralLauncher.updateManifest()
-       }.start()
+            val spectraLauncher = SpectralLauncher(launcher)
+            spectraLauncher.updateManifest()
+        }.start()
+    }
+
+    private fun runAsync(action: () -> Unit) {
+        if(Platform.isFxApplicationThread()) {
+            action()
+            return
+        }
+
+        val doneLatch = CountDownLatch(1)
+        Platform.runLater {
+            try {
+                action()
+            } finally {
+                doneLatch.countDown()
+            }
+        }
+
+        try {
+            doneLatch.await()
+        } catch (e : InterruptedException) {
+            /*
+             * Do nothing.
+             */
+        }
     }
 
     companion object {

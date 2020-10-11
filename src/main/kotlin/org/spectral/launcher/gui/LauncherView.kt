@@ -102,6 +102,7 @@ class LauncherView : View("Spectral") {
          * The status text
          */
         label("Initializing Launcher...") {
+            status = this
             font = Font(12.0)
             paddingTop = 32.0
         }
