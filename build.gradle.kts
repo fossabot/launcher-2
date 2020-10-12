@@ -46,6 +46,13 @@ application {
 publishing {
     repositories {
         mavenLocal()
+        maven {
+            url = uri("https://repo.spectralpowered.org/")
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_TOKEN")
+            }
+        }
     }
 
     publications {
