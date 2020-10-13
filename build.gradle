@@ -1,0 +1,60 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'application'
+    id 'maven-publish'
+}
+
+apply from: 'versions.gradle'
+
+wrapper {
+    gradleVersion = '6.6.1'
+}
+
+group = 'org.spectral.launcher'
+version = '1.0.0'
+
+javafx {
+    version = '11'
+    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
+}
+
+run {
+    mainClassName = "org.spectral.launcher.gui.LauncherApp"
+    workingDir = rootProject.projectDir
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.tinylog:tinylog-api-kotlin:$tinylog"
+    implementation "org.tinylog:tinylog-impl:$tinylog"
+    implementation "javax.xml.bind:jaxb-api:$jaxb"
+    implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
+    implementation "no.tornado:tornadofx:$tornadofx"
+}
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId = "org.spectral.launcher"
+            artifactId = "launcher"
+            version = rootProject.version
+            from components.java
+        }
+    }
+}

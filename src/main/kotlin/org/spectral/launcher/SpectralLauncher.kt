@@ -20,7 +20,6 @@ package org.spectral.launcher
 import org.spectral.launcher.gui.LauncherApp
 import org.spectral.launcher.manifest.AppManifest
 import org.tinylog.kotlin.Logger
-import java.io.File
 import java.nio.file.Files
 import javax.xml.bind.JAXB
 
