@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
     id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.22.1'
     id 'application'
     id 'maven-publish'
 }
@@ -16,7 +17,14 @@ version = '1.0.0'
 
 javafx {
     version = '11'
-    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
+    modules = ['javafx.base', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
+}
+
+jlink {
+    launcher {
+        name = 'spectral'
+    }
+    addExtraDependencies("javafx")
 }
 
 run {
@@ -30,7 +38,9 @@ dependencies {
     implementation "org.tinylog:tinylog-impl:$tinylog"
     implementation "javax.xml.bind:jaxb-api:$jaxb"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
-    implementation "no.tornado:tornadofx:$tornadofx"
+    implementation("no.tornado:tornadofx:$tornadofx") {
+        exclude group: "org.jetbrains.kotlin"
+    }
 }
 repositories {
     mavenLocal()
@@ -40,8 +50,12 @@ repositories {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
+}
+
+compileJava {
+    targetCompatibility = JavaVersion.VERSION_11.toString()
 }
 
 publishing {

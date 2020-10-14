@@ -41,14 +41,14 @@ class LauncherApp : Application() {
         FX.registerApplication(this, stage)
 
         this.stage = Stage(StageStyle.UNDECORATED)
-        this.stage.icons.add(Image("/graphics/logo-app-icon.png"))
+        this.stage.icons.add(Image(LauncherApp::class.java.getResource("/graphics/logo-app-icon.png").toExternalForm()))
 
         val scene = Scene(view.root)
 
         /*
          * Import the spectral CSS theme stylesheet.
          */
-        scene.stylesheets.add("/css/spectral.css")
+        scene.stylesheets.add(LauncherApp::class.java.getResource("/css/spectral.css").toExternalForm())
 
         this.stage.scene = scene
 
@@ -59,7 +59,7 @@ class LauncherApp : Application() {
 
         @JvmStatic
         fun main(args: Array<String>) {
-
+            launch<LauncherApp>()
         }
     }
 }
