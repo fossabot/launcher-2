@@ -68,6 +68,16 @@ class LauncherView : View("Spectral") {
         }
     }
 
+    /**
+     * Add progress to the progress bar.
+     *
+     * @param progress Double
+     */
+    fun addProgress(progress: Double) {
+        val newProgressValue = this.progressBar.progress + progress
+        this.updateProgress(newProgressValue)
+    }
+
     override val root = vbox {
         setPrefSize(400.0, 400.0)
         alignment = Pos.CENTER

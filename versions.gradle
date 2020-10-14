@@ -15,20 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.spectral.launcher
-
-import org.spectral.launcher.gui.LauncherApp
-
-interface Launcher {
-
-    val launcherApp: LauncherApp
-
-    fun onLaunch()
-
-    fun onComplete()
-
-    fun updateProgress(progress: Double)
-
-    fun updateStatus(status: String)
-
+ext {
+    tinylog = "2.1.2"
+    jaxb = "2.3.1"
+    tornadofx = "1.7.20"
 }
