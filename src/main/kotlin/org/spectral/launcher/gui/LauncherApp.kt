@@ -22,8 +22,6 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import org.spectral.launcher.SpectralLauncher
-import org.tinylog.kotlin.Logger
 import tornadofx.*
 
 /**
@@ -59,15 +57,9 @@ class LauncherApp : Application() {
 
     companion object {
 
-        var launcher = object : SpectralLauncher() {
-            override fun addProgress(progress: Double) {}
-            override fun updateProgress(progress: Double) {}
-            override fun updateStatus(status: String) {}
-        }
-
         @JvmStatic
         fun main(args: Array<String>) {
-            launcher.launch()
+
         }
     }
 }

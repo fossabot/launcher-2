@@ -17,77 +17,34 @@
 
 package org.spectral.launcher
 
-import org.spectral.launcher.gui.LauncherApp
-import org.spectral.launcher.manifest.AppManifest
 import org.tinylog.kotlin.Logger
-import java.nio.file.Files
-import javax.xml.bind.JAXB
 
 /**
- * Represents a launch provider instance.
+ * Global controller for starting the spectral launcher.
  */
-abstract class SpectralLauncher {
-
-    abstract fun updateProgress(progress: Double)
-
-    abstract fun addProgress(progress: Double)
-
-    abstract fun updateStatus(status: String)
+object SpectralLauncher {
 
     /**
-     * Launches the spectral launcher.
+     * JVM Static entry into the code.
+     *
+     * @param args Array<String>
+     */
+    @JvmStatic
+    fun main(args: Array<String>) {
+        Logger.info("Initializing...")
+
+        /*
+         * Start the launcher
+         */
+        this.launch()
+    }
+
+    /**
+     * Launches the Spectral launcher program.
      */
     fun launch() {
-        Logger.info("Initializing Spectral launcher...")
-        tornadofx.launch<LauncherApp>()
-    }
+        Logger.info("Preparing Spectral launcher.")
 
-    open fun init() { throw UnsupportedOperationException() }
 
-    lateinit var manifest: AppManifest
-
-    internal fun updateManifest() {
-        Logger.info("Preparing to update application manifest.")
-
-        updateProgress(0.1)
-        updateStatus("Loading application manifest...")
-
-        syncManifest()
-    }
-
-    private fun syncManifest() {
-        Logger.info("Loading embedded manifest file.")
-
-        val embeddedManifest = SpectralLauncher::class.java.getResource("/manifest.xml")
-        manifest = JAXB.unmarshal(embeddedManifest, AppManifest::class.java)
-
-        val cacheDir = manifest.resolveCacheDir()
-        val manifestPath = manifest.getPath(cacheDir)
-
-        /*
-         * Check if a local manifest is present in the cache
-         * data directory.
-         */
-        if(Files.exists(manifestPath)) {
-            Logger.info("Found local manifest. Loading manifest from cache directory.")
-            manifest = JAXB.unmarshal(manifestPath.toFile(), AppManifest::class.java)
-        }
-
-        /*
-         * Check if the remote manifest is a newer version.
-         */
-        try {
-            val remoteManifest = AppManifest.load(manifest.resolveRemoteURI())
-
-            if(remoteManifest.isNewerThan(manifest)) {
-                Logger.info("A new manifest version was found. Updating local manifest.")
-                updateStatus("Updating local manifest...")
-
-                manifest = remoteManifest
-                JAXB.marshal(manifest, manifestPath.toFile())
-            }
-        } catch (e : Exception) {
-            Logger.warn("Failed to update from remote manifest.")
-        }
     }
 }
