@@ -47,6 +47,13 @@ compileKotlin {
 publishing {
     repositories {
         mavenLocal()
+        maven {
+            url 'https://repo.spectralpowered.org'
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_TOKEN")
+            }
+        }
     }
 
     publications {
