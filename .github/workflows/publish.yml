@@ -14,7 +14,7 @@ jobs:
       - run: ./gradlew build -x test
       - run: ./gradlew publish
         env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USER }}
+          MAVEN_USER: ${{ secrets.MAVEN_USER }}
           MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
       - uses: sarisia/actions-status-discord@v1
         if: always()
