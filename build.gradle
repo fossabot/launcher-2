@@ -16,15 +16,8 @@ group = 'org.spectral.launcher'
 version = '1.0.0'
 
 javafx {
-    version = '11'
+    version = '15'
     modules = ['javafx.base', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.controls', 'javafx.graphics', 'javafx.swing']
-}
-
-jlink {
-    launcher {
-        name = 'spectral'
-    }
-    addExtraDependencies("javafx")
 }
 
 run {
@@ -38,9 +31,7 @@ dependencies {
     implementation "org.tinylog:tinylog-impl:$tinylog"
     implementation "javax.xml.bind:jaxb-api:$jaxb"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
-    implementation("no.tornado:tornadofx:$tornadofx") {
-        exclude group: "org.jetbrains.kotlin"
-    }
+    implementation "no.tornado:tornadofx:$tornadofx"
 }
 repositories {
     mavenLocal()
@@ -50,12 +41,19 @@ repositories {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_15.toString()
     }
 }
 
 compileJava {
-    targetCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_15.toString()
+}
+
+jlink {
+    launcher {
+        name = 'spectral'
+    }
+    addExtraDependencies("javafx")
 }
 
 publishing {
