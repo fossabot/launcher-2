@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10' apply false
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.jlink' version '2.22.1'
     id 'application'
@@ -14,8 +14,35 @@ wrapper {
 
 description = "The official launcher for the Oldschool RuneScape Spectral client."
 
-group = 'org.spectral.launcher'
-version = '1.0.0'
+allprojects {
+    apply plugin: "org.jetbrains.kotlin.jvm"
+
+    group = 'org.spectral.launcher'
+    version = '1.0.0'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib"
+        implementation "org.tinylog:tinylog-api-kotlin:$tinylog"
+        implementation "org.tinylog:tinylog-impl:$tinylog"
+    }
+
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_14.toString()
+        }
+    }
+
+    compileJava {
+        targetCompatibility = JavaVersion.VERSION_14.toString()
+    }
+}
 
 javafx {
     version = '14'
@@ -28,28 +55,9 @@ run {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "org.tinylog:tinylog-api-kotlin:$tinylog"
-    implementation "org.tinylog:tinylog-impl:$tinylog"
     implementation "javax.xml.bind:jaxb-api:$jaxb"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
     implementation "no.tornado:tornadofx:$tornadofx"
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_14.toString()
-    }
-}
-
-compileJava {
-    targetCompatibility = JavaVersion.VERSION_14.toString()
 }
 
 jlink {

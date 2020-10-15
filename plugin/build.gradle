@@ -1,0 +1,11 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+description = "Launcher Gradle Plugin"
+
+dependencies {
+    implementation(rootProject)
+    implementation(gradleApi())
+}
