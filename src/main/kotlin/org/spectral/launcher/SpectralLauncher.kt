@@ -23,6 +23,9 @@ import org.spectral.launcher.manifest.AppManifest
 import org.tinylog.kotlin.Logger
 import tornadofx.launch
 import tornadofx.onChangeOnce
+import java.io.File
+import java.io.InputStream
+import java.net.URI
 import java.nio.file.Files
 import javax.xml.bind.JAXB
 
@@ -50,6 +53,11 @@ object SpectralLauncher {
              * Sync the local manifest file.
              */
             this.updateManifest()
+
+            /*
+             * Sync the application files
+             */
+            this.updateFiles()
         }
     }
 
@@ -97,6 +105,21 @@ object SpectralLauncher {
         app.get().updateStatus("Synchronizing manifest...")
 
         this.syncManifest()
+    }
+
+    /**
+     * Synchronizes local application dependency files.
+     */
+    fun updateFiles() {
+        Logger.info("Updating local application files.")
+
+        /*
+         * Update the progress and status.
+         */
+        app.get().updateProgress(0.2)
+        app.get().updateStatus("Synchronizing application files...")
+
+        this.syncFiles()
     }
 
     /**
@@ -156,5 +179,92 @@ object SpectralLauncher {
         } catch(e : Exception) {
             Logger.warn(e, "Unable to fetch remote application manifest.")
         }
+    }
+
+    private fun syncFiles() {
+        Logger.info("Scanning local cache for files requiring an update.")
+
+        val cacheDir = ctx.manifest.resolveCacheDir()
+
+        /*
+         * The library files which require an update.
+         */
+        val needsUpdate = ctx.manifest.files
+            .filter { it.needsUpdate(cacheDir) }
+
+        /*
+         * If nothing requires an update update the progress and move on.
+         */
+        if(needsUpdate.isEmpty()) {
+            app.get().updateProgress(0.25)
+            app.get().updateStatus("Application is update to date.")
+
+            return
+        }
+
+        /*
+         * Calculate the total bytes that is required to download for updating
+         * the library files. These values are used for calculating the
+         * proper progress bar value.
+         */
+        val totalBytes = needsUpdate.map { it.size }.sum()
+        var totalDownloaded = 0L
+
+        /*
+         * Download the latest library files.
+         */
+        needsUpdate.forEach { lib ->
+            Logger.info("Downloading application library file: '${lib.file}'. size=${lib.size} bytes.")
+
+            val target = cacheDir.resolve(lib.file).toAbsolutePath()
+            Files.createDirectories(target.parent)
+
+            val separator = if(ctx.manifest.uri.path.endsWith("/")) "" else "/"
+            val uri = URI.create(ctx.manifest.uri.toString() + separator + lib.file)
+
+            try {
+                val input = openDownloadStream(uri)
+                val output = Files.newOutputStream(target)
+
+                val buf = ByteArray(65536)
+                var read: Int
+                while(input.read(buf).also { read = it } > -1) {
+                    output.write(buf, 0, read)
+                    totalDownloaded += read
+
+                    /*
+                     * Calculate and update the progress and status.
+                     */
+                    val progress = totalDownloaded.toDouble() / totalBytes.toDouble()
+                    app.get().updateProgress(progress)
+                    app.get().updateStatus("Downloading file ${lib.file}...")
+                }
+            } catch(e : Exception) {
+                Logger.error(e) { "Failed to download an application file from archive server." }
+
+                app.get().updateStatus("Failed to download application file. Check your internet connection.")
+                app.get().updateProgress(1.0)
+            }
+        }
+
+        /*
+         * Attempt to update files again. This should show all files are up to date.
+         */
+        this.updateFiles()
+    }
+
+    /**
+     * Opens a byte stream to download a file from a provided URI.
+     *
+     * @param uri URI
+     * @return InputStream
+     */
+    private fun openDownloadStream(uri: URI): InputStream {
+        if(uri.scheme == "file") {
+            return Files.newInputStream(File(uri.path).toPath())
+        }
+
+        val connection = uri.toURL().openConnection()
+        return connection.getInputStream()
     }
 }
