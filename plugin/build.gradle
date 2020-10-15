@@ -1,0 +1,45 @@
+plugins {
+    id 'com.gradle.plugin-publish' version '0.10.1'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+description = "Launcher Gradle Plugin"
+
+dependencies {
+    implementation(rootProject)
+    implementation(gradleApi())
+}
+
+gradlePlugin {
+    plugins {
+        launcherPlugin {
+            id = "org.spectral.launcher.plugin"
+            displayName = "Spectral Launcher Plugin"
+            description = "The Spectral Launcher Gradle Plugin"
+            implementationClass = "org.spectral.launcher.plugin.LauncherPlugin"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://repo.spectralpowered.org/'
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId = "org.spectral.launcher"
+            artifactId = "plugin"
+            version = project.version
+            from components.java
+        }
+    }
+}

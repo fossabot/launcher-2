@@ -22,6 +22,7 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import org.spectral.launcher.SpectralLauncher
 import tornadofx.*
 
 /**
@@ -33,6 +34,33 @@ class LauncherApp : Application() {
     private lateinit var stage: Stage
 
     /**
+     * Updates the progress value on the application view.
+     *
+     * @param progress Double
+     */
+    internal fun updateProgress(progress: Double) {
+       view.updateProgress(progress)
+    }
+
+    /**
+     * Adds a progress value to the current progress bar value.
+     *
+     * @param progress Double
+     */
+    internal fun addProgress(progress: Double) {
+        view.addProgress(progress)
+    }
+
+    /**
+     * Updates the status text in the view.
+     *
+     * @param status String
+     */
+    internal fun updateStatus(status: String) {
+       view.updateStatus(status)
+    }
+
+    /**
      * Start the JavaFX application.
      *
      * @param stage Stage
@@ -41,25 +69,28 @@ class LauncherApp : Application() {
         FX.registerApplication(this, stage)
 
         this.stage = Stage(StageStyle.UNDECORATED)
-        this.stage.icons.add(Image("/graphics/logo-app-icon.png"))
+        this.stage.icons.add(Image(LauncherApp::class.java.getResource("/graphics/logo-app-icon.png").toExternalForm()))
 
         val scene = Scene(view.root)
 
         /*
          * Import the spectral CSS theme stylesheet.
          */
-        scene.stylesheets.add("/css/spectral.css")
+        scene.stylesheets.add(LauncherApp::class.java.getResource("/css/spectral.css").toExternalForm())
 
         this.stage.scene = scene
 
         this.stage.show()
-    }
 
-    companion object {
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-
-        }
+        Thread {
+            Thread.sleep(650)
+            /*
+             * Set the spectral launcher application instance.
+             *
+             * After this value is set, the observable subscription fire on this
+             * launch sequence thread.
+             */
+            SpectralLauncher.app.set(this)
+        }.start()
     }
 }

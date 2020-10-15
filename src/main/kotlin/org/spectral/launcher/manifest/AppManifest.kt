@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.*
  */
 @XmlRootElement(name = "Application")
 @XmlAccessorType(XmlAccessType.FIELD)
-class AppManifest internal constructor() {
+class AppManifest {
 
     /**
      * The timestamp this manifest was created at.
