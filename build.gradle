@@ -66,13 +66,15 @@ shadowJar {
 }
 
 runtime {
-    imageName = "Spectral"
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         noConsole = true
     }
 
     jpackage {
+        imageName = "Spectral"
+        installerName = "Spectral"
+        appVersion = project.version
         def currentOS = org.gradle.internal.os.OperatingSystem.current()
         def imageExtension = currentOS.windows ? 'ico' : currentOS.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "src/main/resources/icons/spectral.$imageExtension"]
