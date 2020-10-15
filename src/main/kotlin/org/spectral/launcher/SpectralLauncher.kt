@@ -114,6 +114,8 @@ object SpectralLauncher {
         val cacheDir = ctx.manifest.resolveCacheDir()
         val manifestPath = ctx.manifest.getPath(cacheDir)
 
+        Files.createDirectories(cacheDir)
+
         /*
          * If a local manifest file exists, load that now.
          */
@@ -146,10 +148,13 @@ object SpectralLauncher {
 
                     ctx.manifest = remoteManifest
                     JAXB.marshal(ctx.manifest, manifestPath.toFile())
+
+                    Logger.info("Completed download of manifest v${ctx.manifest.version}.")
+                    app.get().updateStatus("Updated manifest to v${ctx.manifest.version}...")
                 }
             }
         } catch(e : Exception) {
-            Logger.warn("Unable to fetch remote application manifest.")
+            Logger.warn(e, "Unable to fetch remote application manifest.")
         }
     }
 }
