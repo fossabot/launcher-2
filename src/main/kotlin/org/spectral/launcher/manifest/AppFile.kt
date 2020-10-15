@@ -73,6 +73,17 @@ class AppFile() {
         return cacheDir.resolve(file).toFile().toURI().toURL()
     }
 
+    /**
+     * Gets whether a given application file in a local cached directory requires an update.
+     *
+     * @param cacheDir Path
+     * @return Boolean
+     */
+    fun needsUpdate(cacheDir: Path): Boolean {
+       val path = cacheDir.resolve(this.file)
+        return !Files.exists(path) || Files.size(path) != this.size || checksum(path) != this.checksum
+    }
+
     companion object {
         /**
          * Calculates the checksum of a file at a provided path.
