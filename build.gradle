@@ -18,7 +18,7 @@ allprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
 
     group = 'org.spectral.launcher'
-    version = '1.0.0'
+    version = '1.0.1'
 
     repositories {
         mavenLocal()

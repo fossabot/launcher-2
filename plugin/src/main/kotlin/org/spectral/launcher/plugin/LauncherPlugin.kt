@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskContainer
+import org.spectral.launcher.plugin.task.GenerateManifestTask
 import java.net.URI
 
 /**
@@ -59,9 +60,10 @@ open class LauncherPlugin : Plugin<Project> {
         val tasks: TaskContainer = project.tasks
 
         tasks.register("runLauncher", JavaExec::class.java) {
-            it.group = "spectral"
             it.description = "Runs the Spectral Client launcher."
         }
+
+        tasks.register("generateManifest", GenerateManifestTask::class.java)
     }
 
     /**
