@@ -35,6 +35,7 @@ dependencies {
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
     implementation "no.tornado:tornadofx:$tornadofx"
 }
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -58,6 +59,7 @@ jlink {
     }
     addExtraDependencies("javafx")
     jpackage {
+        installerType = "app"
         imageOptions += ['--icon', 'src/main/resources/icons/windows.ico']
         installerOptions += [
                 '--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut'

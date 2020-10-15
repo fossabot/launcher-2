@@ -8,6 +8,8 @@ module launcher.main {
     requires javafx.media;
     requires javafx.web;
     requires tornadofx;
+    requires org.tinylog.api.kotlin;
+    requires java.xml.bind;
 
     exports org.spectral.launcher.gui;
 }
