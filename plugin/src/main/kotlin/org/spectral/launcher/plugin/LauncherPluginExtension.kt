@@ -19,6 +19,6 @@ package org.spectral.launcher.plugin
 
 import org.gradle.api.Project
 
-class LauncherPluginExtension {
+open class LauncherPluginExtension {
 
 }

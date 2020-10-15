@@ -30,6 +30,8 @@ allprojects {
         implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.10"
         implementation "org.tinylog:tinylog-api-kotlin:$tinylog"
         implementation "org.tinylog:tinylog-impl:$tinylog"
+        implementation "javax.xml.bind:jaxb-api:$jaxb"
+        implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
     }
 
 
@@ -55,8 +57,6 @@ run {
 }
 
 dependencies {
-    implementation "javax.xml.bind:jaxb-api:$jaxb"
-    implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb"
     implementation "no.tornado:tornadofx:$tornadofx"
 }
 
