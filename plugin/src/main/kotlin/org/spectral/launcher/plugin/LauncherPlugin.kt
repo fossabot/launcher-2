@@ -31,33 +31,31 @@ import java.net.URI
 open class LauncherPlugin : Plugin<Project> {
 
     /**
-     * The targeted gradle project using this plugin.
-     */
-    private lateinit var project: Project
-
-    /**
      * Apply the plugin.
      *
      * @param target Project
      */
     override fun apply(target: Project) {
-        this.project = target
+        /*
+         * Register the plugin extension
+         */
+        val extension = target.extensions.create("launcherPlugin", LauncherPluginExtension::class.java)
 
         /*
          * Force add the public Spectral Powered Maven repository
          * to the current project.
          */
-        addGradleRepo(project, "Spectral Powered", "https://repo.spectralpowered.org/")
+        addGradleRepo(target, "Spectral Powered", "https://repo.spectralpowered.org/")
 
         /*
          * Force add the spectral launcher api as a gradle project dependency
          */
-        addGradleDependency(project, "implementation", "org.spectral.launcher", "launcher", project.version.toString())
+        addGradleDependency(target, "implementation", "org.spectral.launcher", "launcher", target.version.toString())
 
         /*
          * Register plugin gradle tasks.
          */
-        val tasks: TaskContainer = project.tasks
+        val tasks: TaskContainer = target.tasks
 
         tasks.register("runLauncher", JavaExec::class.java) {
             it.description = "Runs the Spectral Client launcher."
