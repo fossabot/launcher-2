@@ -23,7 +23,7 @@ javafx {
 }
 
 run {
-    mainClassName = "org.spectral.launcher.gui.LauncherApp"
+    mainClassName = "org.spectral.launcher.SpectralLauncher"
     workingDir = rootProject.projectDir
 }
 
@@ -59,7 +59,6 @@ jlink {
     }
     addExtraDependencies("javafx")
     jpackage {
-        installerType = "app"
         imageOptions += ['--icon', 'src/main/resources/icons/windows.ico']
         installerOptions += [
                 '--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut'

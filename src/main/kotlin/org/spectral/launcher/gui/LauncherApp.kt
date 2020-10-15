@@ -23,7 +23,6 @@ import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import org.spectral.launcher.SpectralLauncher
-import org.tinylog.kotlin.Logger
 import tornadofx.*
 
 /**
@@ -84,6 +83,7 @@ class LauncherApp : Application() {
         this.stage.show()
 
         Thread {
+            Thread.sleep(650)
             /*
              * Set the spectral launcher application instance.
              *

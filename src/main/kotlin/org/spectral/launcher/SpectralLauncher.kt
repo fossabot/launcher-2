@@ -108,7 +108,7 @@ object SpectralLauncher {
     private fun syncManifest() {
         Logger.info("Loading embedded application manifest.")
 
-        val embeddedManifest = SpectralLauncher::class.java.getResource("/app.xml")
+        val embeddedManifest = SpectralLauncher::class.java.getResource("/manifest.xml")
         ctx.manifest = JAXB.unmarshal(embeddedManifest, AppManifest::class.java)
 
         val cacheDir = ctx.manifest.resolveCacheDir()
