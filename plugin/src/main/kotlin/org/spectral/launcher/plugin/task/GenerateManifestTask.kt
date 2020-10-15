@@ -27,10 +27,7 @@ import org.spectral.launcher.manifest.AppFile
 import org.spectral.launcher.manifest.AppManifest
 import java.io.File
 import java.net.URI
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
+import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import javax.xml.bind.JAXB
 
@@ -56,7 +53,7 @@ abstract class GenerateManifestTask : LauncherTask() {
      */
     @get:Input
     @get:Option(option = "outputDir", description = "The folder to output dependency jars and manifest file to.")
-    abstract var outputDir: File
+    abstract var outputDir: String
 
     /**
      * The version of this manifest file. This will tell the client
@@ -99,11 +96,11 @@ abstract class GenerateManifestTask : LauncherTask() {
         manifest.launcherClass = this.launcherClass
         manifest.ts = System.currentTimeMillis()
 
-        Files.walkFileTree(outputDir.toPath(), object : SimpleFileVisitor<Path>() {
+        Files.walkFileTree(Paths.get(outputDir), object : SimpleFileVisitor<Path>() {
             override fun visitFile(file: Path, attrs: BasicFileAttributes?): FileVisitResult {
                 if(!Files.isDirectory(file) && !file.fileName.toString().startsWith("launcher")) {
                     println("Found runtime dependency Jar: '$file'.")
-                    manifest.files.add(AppFile(outputDir.toPath(), file))
+                    manifest.files.add(AppFile(Paths.get(outputDir), file))
                 }
 
                 return FileVisitResult.CONTINUE
@@ -111,6 +108,6 @@ abstract class GenerateManifestTask : LauncherTask() {
         })
 
         println("Exporting generated manifest to output directory.")
-        JAXB.marshal(manifest, outputDir.toPath().resolve(manifest.filename).toFile())
+        JAXB.marshal(manifest, Paths.get(outputDir).resolve(manifest.filename).toFile())
     }
 }
