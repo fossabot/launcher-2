@@ -17,6 +17,7 @@
 
 package org.spectral.launcher
 
+import javafx.application.Platform
 import org.tinylog.kotlin.Logger
 
 /**
@@ -25,16 +26,63 @@ import org.tinylog.kotlin.Logger
 abstract class AbstractLauncher {
 
     /**
-     * The launch context this launcher was started with?
+     * The classloader holding all the instances of the application and it's
+     * dependencies.
      */
-    internal lateinit var ctx: LaunchContext
+    lateinit var classloader: ClassLoader internal set
 
     /**
-     * Launches the extended type's launcher.
-     *
-     * @param ctx LaunchContext
+     * The logic invoked when the launcher logic is to start.
      */
-    internal fun start(ctx: LaunchContext) {
-        Logger.info("Starting initialized launcher tasks.")
+    abstract fun onLaunch()
+
+    /**
+     * The logic invoked when the launch sequence completes.
+     */
+    abstract fun onComplete()
+
+    /**
+     * Tells the launcher everything is complete and to close and invoke 'onComplete' implementation
+     * logic.
+     */
+    fun complete() {
+        Logger.info("Launcher has completed successfully. Continuing to application startup.")
+
+        /*
+         * Close the javafx application.
+         */
+        Platform.exit()
+
+        /*
+         * Invoke the onComplete logic.
+         */
+        this.onComplete()
+    }
+
+    /**
+     * Updates the progress bar value to specific double percentage between 0.0 - 1.0
+     *
+     * @param progress Double
+     */
+    fun updateProgress(progress: Double) {
+        SpectralLauncher.app.get().updateProgress(progress)
+    }
+
+    /**
+     * Adds a progress bar value to the current progress bar value.
+     *
+     * @param progress Double
+     */
+    fun addProgress(progress: Double) {
+        SpectralLauncher.app.get().addProgress(progress)
+    }
+
+    /**
+     * Updates the status text in the launcher view.
+     *
+     * @param status String
+     */
+    fun updateStatus(status: String) {
+       SpectralLauncher.app.get().updateStatus(status)
     }
 }
