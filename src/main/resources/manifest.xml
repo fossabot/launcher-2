@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Application ts="1602740606425" uri="https://archive.spectralpowered.org/latest/" main="org.spectral.client.launcher.Launcher">
+<Application ts="1602740606425" uri="http://archive.spectralpowered.org/latest/" main="org.spectral.client.launcher.Launcher">
     <files file="annotations-13.0.jar" checksum="4201984052" size="17536"/>
     <files file="client-1.0.0.jar" checksum="1426381125" size="9470"/>
     <files file="clikt-jvm-2.8.0.jar" checksum="1951910364" size="487770"/>

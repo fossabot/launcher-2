@@ -1,7 +1,8 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.10' apply false
     id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.jlink' version '2.22.1'
+    id 'org.beryx.runtime' version '1.11.4'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'application'
     id 'maven-publish'
 }
@@ -18,7 +19,7 @@ allprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
 
     group = 'org.spectral.launcher'
-    version = '1.0.2'
+    version = '1.0.3'
 
     repositories {
         mavenLocal()
@@ -60,17 +61,49 @@ dependencies {
     implementation "no.tornado:tornadofx:$tornadofx"
 }
 
-jlink {
+shadowJar {
+    archivesBaseName = "spectral-laucnher"
+}
+
+runtime {
+    //noinspection GroovyAssignabilityCheck
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    //noinspection GroovyAssignabilityCheck,GroovyAccessibility
+    modules = [
+            'java.sql',
+            'java.logging',
+            'java.management',
+            'java.xml',
+            'jdk.jsobject',
+            'jdk.xml.dom',
+            'jdk.jfr',
+            'jdk.unsupported',
+            'java.datatransfer',
+            'java.desktop',
+            'java.naming',
+            'java.compiler',
+            'java.scripting',
+            'java.prefs',
+            'jdk.unsupported.desktop',
+            'java.net.http'
+    ]
     launcher {
-        name = 'Spectral Client'
+        noConsole = true
     }
-    addExtraDependencies("javafx")
+
     jpackage {
-        imageOptions += ['--icon', 'src/main/resources/icons/windows.ico']
-        installerOptions += [
-                '--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut'
-        ]
+        imageName = "Spectral"
+        installerName = "Spectral"
+        imageName = "Spectral"
+        appVersion = ""
+        def currentOS = org.gradle.internal.os.OperatingSystem.current()
+        def imageExtension = currentOS.windows ? 'ico' : currentOS.macOsX ? 'icns' : 'png'
+        imageOptions += ['--icon', "src/main/resources/icons/spectral.$imageExtension"]
+        installerOptions += ['--resource-dir', 'src/main/resources']
+        installerOptions += ['--vendor', 'Spectral Powered']
+        if(currentOS.windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+        }
     }
 }
 

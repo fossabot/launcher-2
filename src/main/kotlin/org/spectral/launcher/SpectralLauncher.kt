@@ -17,7 +17,9 @@
 
 package org.spectral.launcher
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
+import javafx.fxml.FXMLLoader
 import org.spectral.launcher.gui.LauncherApp
 import org.spectral.launcher.manifest.AppManifest
 import org.tinylog.kotlin.Logger
@@ -26,8 +28,14 @@ import tornadofx.onChangeOnce
 import java.io.File
 import java.io.InputStream
 import java.net.URI
+import java.net.URLClassLoader
 import java.nio.file.Files
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
+import javax.net.ssl.*
 import javax.xml.bind.JAXB
+
 
 /**
  * Global controller for starting the spectral launcher.
@@ -49,6 +57,7 @@ object SpectralLauncher {
      */
     init {
         app.onChangeOnce {
+            this.ignoreSSLCertificates()
             /*
              * Sync the local manifest file.
              */
@@ -58,6 +67,11 @@ object SpectralLauncher {
              * Sync the application files
              */
             this.updateFiles()
+
+            /*
+             * Create the application environment.
+             */
+            this.launchApplicationEnvironment()
         }
     }
 
@@ -176,7 +190,7 @@ object SpectralLauncher {
                     app.get().updateStatus("Updated manifest to v${ctx.manifest.version}...")
                 }
             }
-        } catch(e : Exception) {
+        } catch (e: Exception) {
             Logger.warn(e, "Unable to fetch remote application manifest.")
         }
     }
@@ -196,7 +210,7 @@ object SpectralLauncher {
          * If nothing requires an update update the progress and move on.
          */
         if(needsUpdate.isEmpty()) {
-            app.get().updateProgress(0.25)
+            app.get().updateProgress(0.2)
             app.get().updateStatus("Application is update to date.")
 
             return
@@ -239,7 +253,7 @@ object SpectralLauncher {
                     app.get().updateProgress(progress)
                     app.get().updateStatus("Downloading file ${lib.file}...")
                 }
-            } catch(e : Exception) {
+            } catch (e: Exception) {
                 Logger.error(e) { "Failed to download an application file from archive server." }
 
                 app.get().updateStatus("Failed to download application file. Check your internet connection.")
@@ -251,6 +265,34 @@ object SpectralLauncher {
          * Attempt to update files again. This should show all files are up to date.
          */
         this.updateFiles()
+    }
+
+    /**
+     * Ignores the SSL certificates by accepting any self-signed.
+     *
+     * @throws CertificateException
+     */
+    private fun ignoreSSLCertificates() {
+        val trustManager = arrayOf<TrustManager>(
+            object : X509TrustManager {
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(x509Certificates: Array<X509Certificate>, s: String) {
+                }
+
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(x509Certificates: Array<X509Certificate>, s: String) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate>? {
+                    return null
+                }
+            })
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustManager, SecureRandom())
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+
+        val hostnameVerifier = HostnameVerifier { s: String?, sslSession: SSLSession? -> true }
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier)
     }
 
     /**
@@ -266,5 +308,74 @@ object SpectralLauncher {
 
         val connection = uri.toURL().openConnection()
         return connection.getInputStream()
+    }
+
+    /**
+     * Creates a application class loader with all the dependencies loaded which are specified in the
+     * application manifest file..
+     */
+    private fun createClassLoader(): ClassLoader {
+        Logger.info("Creating application class loader.")
+
+        app.get().updateStatus("Creating application environment...")
+
+        val cacheDir = ctx.manifest.resolveCacheDir()
+        val libs = ctx.manifest.files.map { it.toURL(cacheDir) }
+        val systemClassLoader = ClassLoader.getSystemClassLoader()
+
+        if(systemClassLoader is LauncherClassLoader) {
+            systemClassLoader.addUrls(libs)
+            return systemClassLoader
+        } else {
+            val classloader = URLClassLoader(libs.toTypedArray())
+            Thread.currentThread().contextClassLoader = classloader
+
+            /*
+             * Update the JavaFX FXML loader thread to the current class loader.
+             */
+            FXMLLoader.setDefaultClassLoader(classloader)
+
+            /*
+             * We need to inform JavaFX of the classloader which is going to be
+             * continuing the request threads.
+             */
+            Platform.runLater {
+                Thread.currentThread().contextClassLoader = classloader
+            }
+
+            return classloader
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun launchApplicationEnvironment() {
+        Logger.info("Preparing application environment.")
+
+        /*
+         * Create the class loader with all of the application dependencies pre-loaded.
+         */
+        val classloader = this.createClassLoader()
+
+        /*
+         * Load the the launcher class from the application manifest file.
+         */
+        val launcherClass = classloader.loadClass(ctx.manifest.launcherClass) as Class<out AbstractLauncher>
+        val launcherInstance = launcherClass.getDeclaredConstructor().newInstance()
+
+        /*
+         * Update the launcher instance classloader.
+         */
+        launcherInstance.classloader = classloader
+
+        Logger.info("Handing off launch sequence to the Spectral client launcher class.")
+
+        app.get().updateProgress(0.25)
+        app.get().updateStatus("Launcher handing off to Spectral client...")
+
+        /*
+         * Hand off the launch sequence to the implement launcher logic
+         * by calling the loaded launcher class's 'onLaunch()' logic.
+         */
+        launcherInstance.onLaunch()
     }
 }
