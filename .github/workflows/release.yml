@@ -26,7 +26,7 @@ jobs:
       - run: ./gradlew build -x test
       - run: ./gradlew jpackage
       - id: upload_release_artifact
-        uses: actions/update-release-asset@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
