@@ -1,7 +1,7 @@
 name: upload_artifacts
 on:
   release:
-    types: [created]
+    types: [published]
 jobs:
   windows:
     runs-on: windows-latest
