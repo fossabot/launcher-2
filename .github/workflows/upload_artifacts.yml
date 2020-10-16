@@ -1,9 +1,9 @@
 name: upload_artifacts
 on:
   release:
-    types: [published]
+    types: [created]
 jobs:
-  build_windows:
+  windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
