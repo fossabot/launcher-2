@@ -31,6 +31,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.steps.create_release.outputs.upload_url }}
-          asset_path: ./build/jpackage/Spectral-${{ github.ref }}.exe
-          asset_name: Spectral-Installer.exe
+          asset_path: ./build/jpackage/Spectral-1.0.3.exe
+          asset_name: SpectralInstaller.exe
           asset_content_type: application/zip
