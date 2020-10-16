@@ -94,7 +94,8 @@ runtime {
     jpackage {
         imageName = "Spectral"
         installerName = "Spectral"
-        appVersion = project.version
+        imageName = "Spectral"
+        appVersion = ""
         def currentOS = org.gradle.internal.os.OperatingSystem.current()
         def imageExtension = currentOS.windows ? 'ico' : currentOS.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "src/main/resources/icons/spectral.$imageExtension"]
