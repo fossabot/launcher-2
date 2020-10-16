@@ -27,7 +27,12 @@ import java.io.File
 import java.io.InputStream
 import java.net.URI
 import java.nio.file.Files
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
+import javax.net.ssl.*
 import javax.xml.bind.JAXB
+
 
 /**
  * Global controller for starting the spectral launcher.
@@ -49,6 +54,7 @@ object SpectralLauncher {
      */
     init {
         app.onChangeOnce {
+            this.ignoreSSLCertificates()
             /*
              * Sync the local manifest file.
              */
@@ -176,7 +182,7 @@ object SpectralLauncher {
                     app.get().updateStatus("Updated manifest to v${ctx.manifest.version}...")
                 }
             }
-        } catch(e : Exception) {
+        } catch (e: Exception) {
             Logger.warn(e, "Unable to fetch remote application manifest.")
         }
     }
@@ -239,7 +245,7 @@ object SpectralLauncher {
                     app.get().updateProgress(progress)
                     app.get().updateStatus("Downloading file ${lib.file}...")
                 }
-            } catch(e : Exception) {
+            } catch (e: Exception) {
                 Logger.error(e) { "Failed to download an application file from archive server." }
 
                 app.get().updateStatus("Failed to download application file. Check your internet connection.")
@@ -251,6 +257,29 @@ object SpectralLauncher {
          * Attempt to update files again. This should show all files are up to date.
          */
         this.updateFiles()
+    }
+
+    private fun ignoreSSLCertificates() {
+        val trustManager = arrayOf<TrustManager>(
+            object : X509TrustManager {
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(x509Certificates: Array<X509Certificate>, s: String) {
+                }
+
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(x509Certificates: Array<X509Certificate>, s: String) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate>? {
+                    return null
+                }
+            })
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustManager, SecureRandom())
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+
+        val hostnameVerifier = HostnameVerifier { s: String?, sslSession: SSLSession? -> true }
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier)
     }
 
     /**
