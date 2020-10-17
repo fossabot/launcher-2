@@ -43,6 +43,11 @@ import javax.xml.bind.JAXB
 object SpectralLauncher {
 
     /**
+     * The launcher implementation instance.
+     */
+    internal lateinit var launcher: AbstractLauncher
+
+    /**
      * The late initialized JavaFX application instance.
      */
     internal var app = SimpleObjectProperty<LauncherApp>()
@@ -57,16 +62,18 @@ object SpectralLauncher {
      */
     init {
         app.onChangeOnce {
-            this.ignoreSSLCertificates()
-            /*
-             * Sync the local manifest file.
-             */
-            this.updateManifest()
+            if(!this::launcher.isInitialized) {
+                this.ignoreSSLCertificates()
+                /*
+                 * Sync the local manifest file.
+                 */
+                this.updateManifest()
 
-            /*
-             * Sync the application files
-             */
-            this.updateFiles()
+                /*
+                 * Sync the application files
+                 */
+                this.updateFiles()
+            }
 
             /*
              * Create the application environment.
@@ -85,6 +92,16 @@ object SpectralLauncher {
         /*
          * Start the launcher
          */
+        this.launch()
+    }
+
+    /**
+     * Launches with a set launcher implementation instance.
+     *
+     * @param launcher AbstractLauncher
+     */
+    fun launch(launcher: AbstractLauncher) {
+        this.launcher = launcher
         this.launch()
     }
 
@@ -351,21 +368,20 @@ object SpectralLauncher {
     private fun launchApplicationEnvironment() {
         Logger.info("Preparing application environment.")
 
-        /*
-         * Create the class loader with all of the application dependencies pre-loaded.
-         */
-        val classloader = this.createClassLoader()
+        val launcherInstance = if(!this::launcher.isInitialized) {
+            /*
+             * Create the class loader with all of the application dependencies pre-loaded.
+             */
+            val classloader = this.createClassLoader()
 
-        /*
-         * Load the the launcher class from the application manifest file.
-         */
-        val launcherClass = classloader.loadClass(ctx.manifest.launcherClass) as Class<out AbstractLauncher>
-        val launcherInstance = launcherClass.getDeclaredConstructor().newInstance()
-
-        /*
-         * Update the launcher instance classloader.
-         */
-        launcherInstance.classloader = classloader
+            /*
+             * Load the the launcher class from the application manifest file.
+             */
+            val launcherClass = classloader.loadClass(ctx.manifest.launcherClass) as Class<out AbstractLauncher>
+            launcherClass.getDeclaredConstructor().newInstance()
+        } else {
+            this.launcher
+        }
 
         Logger.info("Handing off launch sequence to the Spectral client launcher class.")
 
