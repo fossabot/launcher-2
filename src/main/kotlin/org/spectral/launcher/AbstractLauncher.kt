@@ -26,12 +26,6 @@ import org.tinylog.kotlin.Logger
 abstract class AbstractLauncher {
 
     /**
-     * The classloader holding all the instances of the application and it's
-     * dependencies.
-     */
-    lateinit var classloader: ClassLoader internal set
-
-    /**
      * The logic invoked when the launcher logic is to start.
      */
     abstract fun onLaunch()
